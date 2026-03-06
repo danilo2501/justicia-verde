@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "20296342543",
+    "project_id": "denuncia-1ecd8",
+    "storage_bucket": "denuncia-1ecd8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:20296342543:android:278856281e095e7cc0977a",
+        "android_client_info": {
+          "package_name": "com.dani.denuncia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdJCqL2SDhb6DptEZk8E0Rjn-yPaQU9kA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
