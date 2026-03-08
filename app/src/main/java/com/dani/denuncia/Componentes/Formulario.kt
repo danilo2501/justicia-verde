@@ -33,7 +33,7 @@ data class Formulario(
 @Composable
 fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (String) -> Unit) {
     // Opciones desplegable
-    val opciones = listOf("Físico", "Psicológico", "Escolar", "Animal", "Económico", "Digital")
+    val opciones = listOf("Contaminación de recursos hídricos", "Contaminación del aire", "Afectación a la biodiversidad", "Daños al suelo y ecosistemas", "Contaminación sonora")
 
     // Estados de los campos
     var expanded by remember { mutableStateOf(false) }
@@ -89,7 +89,7 @@ fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (S
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = "Reportar Caso de Maltrato",
+                        text = "   Reportar Caso Ambiental",
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold,
@@ -122,7 +122,7 @@ fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (S
                     // Campo desplegable: Tipo de maltrato
                     Column {
                         Text(
-                            text = "Tipo de maltrato *",
+                            text = "Tipo De Maltrato *",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Medium,
@@ -136,7 +136,7 @@ fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (S
                                 value = opcionSeleccionada,
                                 onValueChange = {},
                                 readOnly = true,
-                                placeholder = { Text("Selecciona el tipo de maltrato") },
+                                placeholder = { Text("Selecciona El Tipo De Denuncia") },
                                 trailingIcon = {
                                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                                 },
@@ -174,7 +174,7 @@ fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (S
                     //  Descripción del caso
                     Column {
                         Text(
-                            text = "Descripción del caso *",
+                            text = "Descripción Del Caso *",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Medium,
@@ -183,7 +183,7 @@ fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (S
                         OutlinedTextField(
                             value = descripcion,
                             onValueChange = { descripcion = it },
-                            placeholder = { Text("Describe los detalles del caso...") },
+                            placeholder = { Text("Describe Los Detalles Del Caso...") },
 
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -206,7 +206,7 @@ fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (S
                         OutlinedTextField(
                             value = ubicacion,
                             onValueChange = { ubicacion = it },
-                            placeholder = { Text("Barrio, ciudad, dirección...") },
+                            placeholder = { Text("Barrio, Ciudad, Dirección...") },
 
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp)
@@ -216,7 +216,7 @@ fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (S
                     //  Imagen (URL simulada)
                     Column {
                         Text(
-                            text = "URL de la imagen (opcional)",
+                            text = "URL De La Imagen (Opcional)",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Medium,
@@ -268,7 +268,7 @@ fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (S
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Enviar Reporte",
+                    text = "Enviar Denuncia",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -290,13 +290,13 @@ fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (S
                 onDismissRequest = { showConfirmation = false },
                 title = {
                     Text(
-                        text = "Reporte Enviado",
+                        text = "Denuncia Enviada",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
                 },
                 text = {
-                    Text("Tu reporte ha sido enviado exitosamente. Te contactaremos si necesitamos más información.")
+                    Text("Tu Denuncia ha sido enviada exitosamente. Te contactaremos si necesitamos más información.")
                 },
                 confirmButton = {
                     Button(

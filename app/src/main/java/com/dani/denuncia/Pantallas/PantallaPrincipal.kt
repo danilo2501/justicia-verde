@@ -106,7 +106,7 @@ fun PantallaPrincipal(
                     )
 
                     Text(
-                        text = "Tu ayuda marca la diferencia",
+                        text = "Tu Ayuda Marca La Diferencia",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         textAlign = TextAlign.Center,
@@ -117,8 +117,8 @@ fun PantallaPrincipal(
 
             // MEJORA 2: Botones con diseño mejorado y iconos estándar
             ActionButton(
-                title = "Reportar Maltrato",
-                subtitle = "Reporta un caso de maltrato animal",
+                title = "Hacer Nueva Denuncia",
+                subtitle = "Reporta Tu Caso Ambiental",
                 icon = Icons.Default.Warning, // Icono estándar disponible
                 backgroundColor = MaterialTheme.colorScheme.errorContainer,
                 contentColor = MaterialTheme.colorScheme.onErrorContainer,
@@ -129,7 +129,7 @@ fun PantallaPrincipal(
 
             ActionButton(
                 title = "Ver Reportes",
-                subtitle = "Consulta reportes existentes",
+                subtitle = "Consulta tus Denuncias Existentes",
                 icon = Icons.Default.List, // Icono estándar disponible
                 backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,

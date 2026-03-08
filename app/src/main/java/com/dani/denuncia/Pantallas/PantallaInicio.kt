@@ -82,7 +82,7 @@ fun PantallaInicio(Siguiente: (String) -> Unit, userPrefs: UserPreferencesDataSt
 
 
             Text(
-                text = "Bienvenido",
+                text = " Justicia Verde",
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold,

@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "20296342543",
-    "project_id": "denuncia-1ecd8",
-    "storage_bucket": "denuncia-1ecd8.firebasestorage.app"
+    "project_number": "206853112565",
+    "project_id": "justicia-verde1",
+    "storage_bucket": "justicia-verde1.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:20296342543:android:278856281e095e7cc0977a",
+        "mobilesdk_app_id": "1:206853112565:android:98ac352bef460822957bbc",
         "android_client_info": {
           "package_name": "com.dani.denuncia"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAdJCqL2SDhb6DptEZk8E0Rjn-yPaQU9kA"
+          "current_key": "AIzaSyB6JpNw7WossrEsb86SED3gSR3NiU6w5ZY"
         }
       ],
       "services": {
