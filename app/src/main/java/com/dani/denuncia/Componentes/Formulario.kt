@@ -122,7 +122,7 @@ fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (S
                     // Campo desplegable: Tipo de maltrato
                     Column {
                         Text(
-                            text = "Tipo De Maltrato *",
+                            text = "Tipo de Maltrato *",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Medium,
