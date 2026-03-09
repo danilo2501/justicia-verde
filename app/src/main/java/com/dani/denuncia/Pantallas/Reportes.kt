@@ -9,12 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -34,25 +35,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.dani.denuncia.Componentes.ReporteEnLista
+import com.dani.denuncia.ui.theme.DenunciaTheme
+import com.dani.denuncia.ui.theme.VerdePrincipal
 import com.google.firebase.database.FirebaseDatabase
-
-// Necesitamos importar estos adicionales
-import androidx.compose.foundation.layout.size
-
 
 @Composable
 fun ReportesScreen(onClickReporte: (String) -> Unit = {}) {
     val database = FirebaseDatabase.getInstance().getReference("reportes")
     val reportes = remember { mutableStateListOf<Map<String, Any>>() }
 
-    // Cargar los reportes al iniciar
     LaunchedEffect(Unit) {
         database.get().addOnSuccessListener { snapshot ->
             reportes.clear()
             snapshot.children.forEach { child ->
                 child.value?.let { value ->
                     if (value is Map<*, *>) {
+                        @Suppress("UNCHECKED_CAST")
                         reportes.add(value as Map<String, Any>)
                     }
                 }
@@ -67,8 +67,11 @@ fun ReportesScreen(onClickReporte: (String) -> Unit = {}) {
                 brush = Brush.verticalGradient(
                     colors = listOf(
                         MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.background,
                         MaterialTheme.colorScheme.background
-                    )
+                    ),
+                    startY = 0f,
+                    endY   = 900f
                 )
             )
             .statusBarsPadding()
@@ -76,113 +79,121 @@ fun ReportesScreen(onClickReporte: (String) -> Unit = {}) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
-            // 1: Header con diseño
-            Card(
+
+            // --- Header con degradado ---
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .shadow(
-                        elevation = 8.dp,
-                        shape = RoundedCornerShape(16.dp)
-                    ),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
+                        elevation    = 10.dp,
+                        shape        = RoundedCornerShape(20.dp),
+                        ambientColor = VerdePrincipal.copy(alpha = 0.15f),
+                        spotColor    = VerdePrincipal.copy(alpha = 0.2f)
+                    )
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.colorScheme.secondary
+                            )
+                        )
+                    )
+                    .padding(20.dp)
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Icono y título
                     Box(
                         modifier = Modifier
-                            .size(60.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.primary),
+                            .size(56.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(Color.White.copy(alpha = 0.2f)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            Icons.Default.Person,
-                            contentDescription = "Lista de reportes",
-                            tint = Color.White,
+                            imageVector = Icons.Default.List,
+                            contentDescription = "Reportes",
+                            tint     = Color.White,
                             modifier = Modifier.size(30.dp)
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "Lista de Reportes",
+                        text  = "Lista de Reportes",
                         style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = Color.White,
                         fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
+                        textAlign  = TextAlign.Center
                     )
 
                     Text(
-                        text = "${reportes.size} reportes encontrados",
+                        text  = "${reportes.size} reporte${if (reportes.size != 1) "s" else ""} encontrado${if (reportes.size != 1) "s" else ""}",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        color = Color.White.copy(alpha = 0.85f),
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(top = 8.dp)
+                        modifier  = Modifier.padding(top = 4.dp)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            // MEJORA 2: Contenedor para la lista de reportes
+            // --- Lista de reportes o estado vacío ---
             if (reportes.isNotEmpty()) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
                         .shadow(
-                            elevation = 4.dp,
-                            shape = RoundedCornerShape(16.dp)
+                            elevation    = 6.dp,
+                            shape        = RoundedCornerShape(18.dp),
+                            ambientColor = VerdePrincipal.copy(alpha = 0.1f)
                         ),
-                    shape = RoundedCornerShape(16.dp),
+                    shape  = RoundedCornerShape(18.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface
-                    )
+                    ),
+                    elevation = CardDefaults.cardElevation(0.dp)
                 ) {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(16.dp)
+                            .padding(12.dp)
                     ) {
                         items(reportes) { reporte ->
                             ReporteEnLista(
-                                titulo = (reporte["tipo"] ?: "Sin tipo").toString(),
-                                descripcion = (reporte["descripcion"]
-                                    ?: "Sin descripción").toString(),
-                                ubicacion = (reporte["ubicacion"] ?: "Sin ubicación").toString(),
-                                usuario = (reporte["usuario"] ?: "Anónimo").toString(),
-                                fecha = (reporte["fecha"] ?: "").toString(),
-                                onClick = { onClickReporte(reporte["id"].toString()) }
+                                titulo      = (reporte["tipo"]        ?: "Sin tipo").toString(),
+                                descripcion = (reporte["descripcion"] ?: "Sin descripción").toString(),
+                                ubicacion   = (reporte["ubicacion"]   ?: "Sin ubicación").toString(),
+                                usuario     = (reporte["usuario"]     ?: "Anónimo").toString(),
+                                fecha       = (reporte["fecha"]       ?: "").toString(),
+                                onClick     = { onClickReporte(reporte["id"].toString()) }
                             )
-                            Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                         }
                     }
                 }
             } else {
-                // MEJORA 3: Estado vacío con diseño mejorado
+                // Estado vacío
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
                         .shadow(
                             elevation = 4.dp,
-                            shape = RoundedCornerShape(16.dp)
+                            shape     = RoundedCornerShape(18.dp)
                         ),
-                    shape = RoundedCornerShape(16.dp),
+                    shape  = RoundedCornerShape(18.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface
-                    )
+                    ),
+                    elevation = CardDefaults.cardElevation(0.dp)
                 ) {
                     Column(
                         modifier = Modifier
@@ -191,28 +202,26 @@ fun ReportesScreen(onClickReporte: (String) -> Unit = {}) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Icon(
-                            Icons.Default.Person,
-                            contentDescription = "Sin reportes",
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-                            modifier = Modifier.size(80.dp)
+                        Text(
+                            text     = "📋",
+                            fontSize = 60.sp
                         )
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
                         Text(
-                            text = "No hay reportes",
+                            text  = "Sin reportes aún",
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.SemiBold
                         )
 
                         Text(
-                            text = "Los reportes aparecerán aquí cuando sean creados",
+                            text  = "Los reportes aparecerán aquí cuando sean creados",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f),
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = 8.dp)
+                            modifier  = Modifier.padding(top = 8.dp)
                         )
                     }
                 }
@@ -221,15 +230,15 @@ fun ReportesScreen(onClickReporte: (String) -> Unit = {}) {
     }
 }
 
-
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "Reportes — Modo Claro")
 @Composable
 fun PreviewReportesScreen() {
-    ReportesScreen()
+    DenunciaTheme(darkTheme = false) { ReportesScreen() }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "Reportes — Modo Oscuro",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PreviewReportesScreenEmpty() {
-    ReportesScreen()
+fun PreviewReportesScreenDark() {
+    DenunciaTheme(darkTheme = true) { ReportesScreen() }
 }

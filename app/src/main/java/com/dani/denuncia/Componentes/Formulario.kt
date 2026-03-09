@@ -1,14 +1,46 @@
 package com.dani.denuncia.Componentes
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,6 +51,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.dani.denuncia.ui.theme.DenunciaTheme
+import com.dani.denuncia.ui.theme.VerdePrincipal
 import com.google.firebase.database.FirebaseDatabase
 
 // Modelo de datos
@@ -31,22 +66,30 @@ data class Formulario(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (String) -> Unit) {
-    // Opciones desplegable
-    val opciones = listOf("Contaminación de recursos hídricos", "Contaminación del aire", "Afectación a la biodiversidad", "Daños al suelo y ecosistemas", "Contaminación sonora")
+fun FormularioReporteMaltrato(
+    nombreUsuario: String,
+    anonimo: Boolean,
+    Atras: (String) -> Unit
+) {
+    val opciones = listOf(
+        "Contaminación de recursos hídricos",
+        "Contaminación del aire",
+        "Afectación a la biodiversidad",
+        "Daños al suelo y ecosistemas",
+        "Contaminación sonora"
+    )
 
-    // Estados de los campos
-    var expanded by remember { mutableStateOf(false) }
+    var expanded          by remember { mutableStateOf(false) }
     var opcionSeleccionada by remember { mutableStateOf("") }
+    var descripcion        by remember { mutableStateOf("") }
+    var ubicacion          by remember { mutableStateOf("") }
+    var imagenUrl          by remember { mutableStateOf("") }
+    var showConfirmation   by remember { mutableStateOf(false) }
 
-    var descripcion by remember { mutableStateOf("") }
-    var ubicacion by remember { mutableStateOf("") }
-    var imagenUrl by remember { mutableStateOf("") }
+    val isFormValid = opcionSeleccionada.isNotBlank() &&
+            descripcion.isNotBlank() &&
+            ubicacion.isNotBlank()
 
-    // Estado para mostrar confirmación
-    var showConfirmation by remember { mutableStateOf(false) }
-
-    // Fondo con gradiente y scroll para formularios largos
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -54,89 +97,118 @@ fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (S
                 brush = Brush.verticalGradient(
                     colors = listOf(
                         MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.background,
                         MaterialTheme.colorScheme.background
-                    )
+                    ),
+                    startY = 0f,
+                    endY   = 900f
                 )
             )
+            .statusBarsPadding()
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            // Header con icono y título
-            Card(
+            // --- Header con degradado ---
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp)),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    .shadow(
+                        elevation    = 10.dp,
+                        shape        = RoundedCornerShape(20.dp),
+                        ambientColor = VerdePrincipal.copy(alpha = 0.15f),
+                        spotColor    = VerdePrincipal.copy(alpha = 0.2f)
+                    )
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.error,
+                                MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    )
+                    .padding(20.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(24.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(
-                        Icons.Default.Warning,
-                        contentDescription = "Reportar",
-                        tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(48.dp)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(Color.White.copy(alpha = 0.2f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = "Reportar",
+                            tint     = Color.White,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "   Reportar Caso Ambiental",
+                        text  = "Reportar Caso Ambiental",
                         style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = Color.White,
                         fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
+                        textAlign  = TextAlign.Center
                     )
 
                     Text(
-                        text = "Tu reporte puede salvar vidas",
+                        text  = "Tu reporte puede marcar la diferencia",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        color = Color.White.copy(alpha = 0.85f),
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(top = 8.dp)
+                        modifier  = Modifier.padding(top = 4.dp)
                     )
                 }
             }
 
-
-            //  Card para agrupar campos del formulario
+            // --- Card de campos ---
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp)),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    .shadow(
+                        elevation    = 6.dp,
+                        shape        = RoundedCornerShape(18.dp),
+                        ambientColor = VerdePrincipal.copy(alpha = 0.1f)
+                    ),
+                shape  = RoundedCornerShape(18.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                elevation = CardDefaults.cardElevation(0.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(24.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    // Campo desplegable: Tipo de maltrato
+
+                    // Tipo de maltrato
                     Column {
-                        Text(
-                            text = "Tipo de Maltrato *",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
+                        LabelCampo("Tipo de Caso Ambiental *")
+                        Spacer(modifier = Modifier.height(8.dp))
                         ExposedDropdownMenuBox(
-                            expanded = expanded,
+                            expanded      = expanded,
                             onExpandedChange = { expanded = !expanded }
                         ) {
                             TextField(
-                                value = opcionSeleccionada,
+                                value       = opcionSeleccionada,
                                 onValueChange = {},
-                                readOnly = true,
-                                placeholder = { Text("Selecciona El Tipo De Denuncia") },
+                                readOnly    = true,
+                                placeholder = { Text("Selecciona el tipo de denuncia") },
                                 trailingIcon = {
                                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                                 },
@@ -144,23 +216,23 @@ fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (S
                                     .menuAnchor()
                                     .fillMaxWidth(),
                                 colors = TextFieldDefaults.colors(
-                                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                                    focusedContainerColor   = MaterialTheme.colorScheme.surfaceVariant,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    focusedIndicatorColor   = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                    focusedTextColor        = MaterialTheme.colorScheme.onSurface,
+                                    unfocusedTextColor      = MaterialTheme.colorScheme.onSurface
                                 ),
                                 shape = RoundedCornerShape(12.dp)
                             )
 
                             ExposedDropdownMenu(
-                                expanded = expanded,
+                                expanded      = expanded,
                                 onDismissRequest = { expanded = false }
                             ) {
                                 opciones.forEach { opcion ->
                                     DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                opcion,
-                                                style = MaterialTheme.typography.bodyMedium
-                                            )
-                                        },
+                                        text  = { Text(opcion, style = MaterialTheme.typography.bodyMedium) },
                                         onClick = {
                                             opcionSeleccionada = opcion
                                             expanded = false
@@ -171,141 +243,173 @@ fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (S
                         }
                     }
 
-                    //  Descripción del caso
+                    // Descripción
                     Column {
-                        Text(
-                            text = "Descripción Del Caso *",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
+                        LabelCampo("Descripción del Caso *")
+                        Spacer(modifier = Modifier.height(8.dp))
                         OutlinedTextField(
-                            value = descripcion,
+                            value         = descripcion,
                             onValueChange = { descripcion = it },
-                            placeholder = { Text("Describe Los Detalles Del Caso...") },
-
-                            modifier = Modifier
+                            placeholder   = { Text("Describe los detalles del caso...") },
+                            modifier      = Modifier
                                 .fillMaxWidth()
                                 .height(120.dp),
-                            shape = RoundedCornerShape(12.dp),
+                            shape    = RoundedCornerShape(12.dp),
                             singleLine = false,
-                            maxLines = 5
+                            maxLines = 5,
+                            colors   = campoColores()
                         )
                     }
 
-                    //  Ubicación
+                    // Ubicación
                     Column {
-                        Text(
-                            text = "Ubicación *",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
+                        LabelCampo("Ubicación *")
+                        Spacer(modifier = Modifier.height(8.dp))
                         OutlinedTextField(
-                            value = ubicacion,
+                            value         = ubicacion,
                             onValueChange = { ubicacion = it },
-                            placeholder = { Text("Barrio, Ciudad, Dirección...") },
-
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
+                            placeholder   = { Text("Barrio, ciudad, dirección...") },
+                            modifier      = Modifier.fillMaxWidth(),
+                            shape  = RoundedCornerShape(12.dp),
+                            singleLine = true,
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.LocationOn,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            colors = campoColores()
                         )
                     }
 
-                    //  Imagen (URL simulada)
+                    // URL Imagen
                     Column {
-                        Text(
-                            text = "URL De La Imagen (Opcional)",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
+                        LabelCampo("URL de la imagen (opcional)")
+                        Spacer(modifier = Modifier.height(8.dp))
                         OutlinedTextField(
-                            value = imagenUrl,
+                            value         = imagenUrl,
                             onValueChange = { imagenUrl = it },
-                            placeholder = { Text("https://ejemplo.com/imagen.jpg") },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
+                            placeholder   = { Text("https://ejemplo.com/imagen.jpg") },
+                            modifier      = Modifier.fillMaxWidth(),
+                            shape  = RoundedCornerShape(12.dp),
+                            singleLine = true,
+                            colors = campoColores()
                         )
                     }
                 }
             }
 
-            //  Botón con validación
-            val isFormValid = opcionSeleccionada.isNotBlank() &&
-                    descripcion.isNotBlank() &&
-                    ubicacion.isNotBlank()
-
-            Button(
-                onClick = {
-                    enviarReporte(
-                        nombreUsuario = nombreUsuario, // luego lo obtienes de DataStore
-                        anonimo = anonimo,           // también desde DataStore
-                        tipo = opcionSeleccionada,
-                        descripcion = descripcion,
-                        ubicacion = ubicacion,
-                        imagenUrl = if (imagenUrl.isNotBlank()) imagenUrl else null
-                    )
-                    showConfirmation = true
-                    Atras("home/$nombreUsuario")
-                },
+            // --- Botón Enviar con degradado ---
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(12.dp),
-                enabled = isFormValid,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                    .height(56.dp)
+                    .shadow(
+                        elevation = if (isFormValid) 8.dp else 2.dp,
+                        shape     = RoundedCornerShape(14.dp),
+                        spotColor = VerdePrincipal.copy(alpha = 0.4f)
+                    )
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(
+                        brush = if (isFormValid) {
+                            Brush.horizontalGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.tertiary
+                                )
+                            )
+                        } else {
+                            Brush.horizontalGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.surfaceVariant,
+                                    MaterialTheme.colorScheme.surfaceVariant
+                                )
+                            )
+                        }
+                    ),
+                contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    Icons.Default.Send,
-                    contentDescription = "Enviar",
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Enviar Denuncia",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
+                Button(
+                    onClick = {
+                        enviarReporte(
+                            nombreUsuario = nombreUsuario,
+                            anonimo       = anonimo,
+                            tipo          = opcionSeleccionada,
+                            descripcion   = descripcion,
+                            ubicacion     = ubicacion,
+                            imagenUrl     = if (imagenUrl.isNotBlank()) imagenUrl else null
+                        )
+                        showConfirmation = true
+                        Atras("home/$nombreUsuario")
+                    },
+                    modifier  = Modifier.fillMaxSize(),
+                    shape     = RoundedCornerShape(14.dp),
+                    enabled   = isFormValid,
+                    colors    = ButtonDefaults.buttonColors(
+                        containerColor         = Color.Transparent,
+                        contentColor           = Color.White,
+                        disabledContainerColor = Color.Transparent,
+                        disabledContentColor   = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(0.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Send,
+                        contentDescription = "Enviar",
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text       = "Enviar Denuncia",
+                        fontWeight = FontWeight.Bold,
+                        fontSize   = 16.sp,
+                        letterSpacing = 0.3.sp
+                    )
+                }
             }
 
-            // Campos obligatorios
             Text(
-                text = "* Campos obligatorios",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                text  = "* Campos obligatorios",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier  = Modifier.fillMaxWidth()
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Snackbar de confirmación
+        // --- Diálogo de confirmación ---
         if (showConfirmation) {
             AlertDialog(
                 onDismissRequest = { showConfirmation = false },
+                containerColor   = MaterialTheme.colorScheme.surface,
                 title = {
                     Text(
-                        text = "Denuncia Enviada",
+                        text  = "Denuncia Enviada",
                         style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                 },
                 text = {
-                    Text("Tu Denuncia ha sido enviada exitosamente. Te contactaremos si necesitamos más información.")
+                    Text(
+                        text  = "Tu denuncia fue enviada exitosamente. Te contactaremos si necesitamos más información.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 },
                 confirmButton = {
                     Button(
                         onClick = { showConfirmation = false },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
-                        )
+                        colors  = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor   = Color.White
+                        ),
+                        shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("Aceptar")
+                        Text("Aceptar", fontWeight = FontWeight.SemiBold)
                     }
                 }
             )
@@ -313,16 +417,29 @@ fun FormularioReporteMaltrato(nombreUsuario: String, anonimo: Boolean, Atras: (S
     }
 }
 
-@Preview(showBackground = true)
+// --- Helpers de UI ---
+
 @Composable
-fun PreviewFormularioReporteMaltrato() {
-    FormularioReporteMaltrato(
-        nombreUsuario = "Danilo",
-        anonimo = false,
-        Atras = {}
+private fun LabelCampo(texto: String) {
+    Text(
+        text  = texto,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurface,
+        fontWeight = FontWeight.SemiBold
     )
 }
 
+@Composable
+private fun campoColores() = OutlinedTextFieldDefaults.colors(
+    focusedBorderColor   = MaterialTheme.colorScheme.primary,
+    focusedLabelColor    = MaterialTheme.colorScheme.primary,
+    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+    cursorColor          = MaterialTheme.colorScheme.primary,
+    focusedTextColor     = MaterialTheme.colorScheme.onSurface,
+    unfocusedTextColor   = MaterialTheme.colorScheme.onSurface
+)
+
+// --- Firebase ---
 fun enviarReporte(
     nombreUsuario: String,
     anonimo: Boolean,
@@ -331,23 +448,41 @@ fun enviarReporte(
     ubicacion: String,
     imagenUrl: String?
 ) {
-
     val database = FirebaseDatabase.getInstance().getReference("reportes")
-
     val reporteId = database.push().key ?: return
     val reporte = mapOf(
-        "id" to reporteId,
-        "usuario" to if (anonimo) "Anónimo" else nombreUsuario,
-        "tipo" to tipo,
+        "id"          to reporteId,
+        "usuario"     to if (anonimo) "Anónimo" else nombreUsuario,
+        "tipo"        to tipo,
         "descripcion" to descripcion,
-        "ubicacion" to ubicacion,
-        "imagenUrl" to imagenUrl,
-        "fecha" to System.currentTimeMillis()
+        "ubicacion"   to ubicacion,
+        "imagenUrl"   to imagenUrl,
+        "fecha"       to System.currentTimeMillis()
     )
-
     database.child(reporteId).setValue(reporte)
-
 }
 
+@Preview(showBackground = true, name = "Formulario — Modo Claro")
+@Composable
+fun PreviewFormulario() {
+    DenunciaTheme(darkTheme = false) {
+        FormularioReporteMaltrato(
+            nombreUsuario = "María",
+            anonimo       = false,
+            Atras         = {}
+        )
+    }
+}
 
-
+@Preview(showBackground = true, name = "Formulario — Modo Oscuro",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun PreviewFormularioDark() {
+    DenunciaTheme(darkTheme = true) {
+        FormularioReporteMaltrato(
+            nombreUsuario = "María",
+            anonimo       = false,
+            Atras         = {}
+        )
+    }
+}

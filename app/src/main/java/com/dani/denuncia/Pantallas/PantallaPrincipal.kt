@@ -9,15 +9,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -38,6 +39,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dani.denuncia.ui.theme.DenunciaTheme
+import com.dani.denuncia.ui.theme.VerdePrincipal
 
 @Composable
 fun PantallaPrincipal(
@@ -46,8 +49,6 @@ fun PantallaPrincipal(
     IrAFormulario: () -> Unit,
     IrAReporte: () -> Unit
 ) {
-
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -55,189 +56,282 @@ fun PantallaPrincipal(
                 brush = Brush.verticalGradient(
                     colors = listOf(
                         MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.background,
                         MaterialTheme.colorScheme.background
-                    )
+                    ),
+                    startY = 0f,
+                    endY   = 900f
                 )
             )
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
+                .padding(horizontal = 24.dp, vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
 
-            // MEJORA 1: Header con icono y título
+            // --- Saludo personalizado ---
+            Text(
+                text  = "Hola, $nombre",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.ExtraBold,
+                textAlign  = TextAlign.Center
+            )
+            Text(
+                text  = "¿Qué deseas hacer hoy?",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                textAlign = TextAlign.Center,
+                modifier  = Modifier.padding(top = 4.dp)
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // --- Card encabezado con degradado interior ---
             Card(
                 modifier = Modifier
-                    .padding(bottom = 40.dp)
-                    .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp)),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    .fillMaxWidth()
+                    .shadow(
+                        elevation    = 12.dp,
+                        shape        = RoundedCornerShape(20.dp),
+                        ambientColor = VerdePrincipal.copy(alpha = 0.15f),
+                        spotColor    = VerdePrincipal.copy(alpha = 0.2f)
+                    ),
+                shape  = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                elevation = CardDefaults.cardElevation(0.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.tertiary
+                                )
+                            )
+                        )
+                        .padding(24.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(80.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.primary),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            Icons.Default.Home,
-                            contentDescription = "Protección",
-                            tint = Color.White,
-                            modifier = Modifier.size(40.dp)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally,
+                           modifier = Modifier.fillMaxWidth()) {
+
+                        Box(
+                            modifier = Modifier
+                                .size(72.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(Color.White.copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text     = "🌿",
+                                fontSize = 36.sp
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(14.dp))
+
+                        Text(
+                            text  = "Centro de Reportes",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            textAlign  = TextAlign.Center
+                        )
+
+                        Text(
+                            text  = "Tu ayuda marca la diferencia",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.White.copy(alpha = 0.85f),
+                            textAlign = TextAlign.Center,
+                            modifier  = Modifier.padding(top = 6.dp)
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = "Centro de Reportes",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Text(
-                        text = "Tu Ayuda Marca La Diferencia",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
                 }
             }
 
-            // MEJORA 2: Botones con diseño mejorado y iconos estándar
-            ActionButton(
-                title = "Hacer Nueva Denuncia",
-                subtitle = "Reporta Tu Caso Ambiental",
-                icon = Icons.Default.Warning, // Icono estándar disponible
-                backgroundColor = MaterialTheme.colorScheme.errorContainer,
-                contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                onClick = { IrAFormulario() }
+            Spacer(modifier = Modifier.height(28.dp))
+
+            // --- Botón: Hacer Nueva Denuncia ---
+            AccionCard(
+                titulo    = "Hacer Nueva Denuncia",
+                subtitulo = "Reporta tu caso ambiental",
+                icono     = Icons.Default.Warning,
+                gradiente = Brush.horizontalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.error,
+                        MaterialTheme.colorScheme.errorContainer
+                    )
+                ),
+                colorIcono = MaterialTheme.colorScheme.onError,
+                colorTexto = MaterialTheme.colorScheme.onError,
+                onClick    = IrAFormulario
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // --- Botón: Ver Reportes ---
+            AccionCard(
+                titulo    = "Ver Reportes",
+                subtitulo = "Consulta las denuncias existentes",
+                icono     = Icons.Default.List,
+                gradiente = Brush.horizontalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.secondary
+                    )
+                ),
+                colorIcono = Color.White,
+                colorTexto = Color.White,
+                onClick    = IrAReporte
+            )
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            Text(
+                text  = "Todos los reportes son confidenciales",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.45f),
+                textAlign = TextAlign.Center,
+                modifier  = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            ActionButton(
-                title = "Ver Reportes",
-                subtitle = "Consulta tus Denuncias Existentes",
-                icon = Icons.Default.List, // Icono estándar disponible
-                backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                onClick = {
-                    IrAReporte()
-                }
-            )
-
-            // MEJORA 3: Texto informativo en la parte inferior
-            Text(
-                text = "Todos los reportes son confidenciales",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(top = 40.dp)
-                    .fillMaxWidth()
-            )
-            Spacer(
-                modifier = Modifier
-                    .height(30.dp)
-            )
-
+            // --- Botón Salir ---
             Button(
                 onClick = { Atras("Login") },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer
-                ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp)
+                    .height(50.dp),
+                shape  = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor   = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                elevation = ButtonDefaults.buttonElevation(0.dp)
             ) {
-
-                Text(text = "Salir", fontSize = 20.sp)
+                Icon(
+                    imageVector = Icons.Default.ExitToApp,
+                    contentDescription = "Salir",
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Salir",
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize   = 15.sp
+                )
             }
         }
     }
 }
 
-// MEJORA 4: Componente reutilizable para botones de acción
+// --- Componente reutilizable: Tarjeta de acción con degradado ---
 @Composable
-fun ActionButton(
-    title: String,
-    subtitle: String,
-    icon: ImageVector,
-    backgroundColor: Color,
-    contentColor: Color,
+fun AccionCard(
+    titulo: String,
+    subtitulo: String,
+    icono: ImageVector,
+    gradiente: Brush,
+    colorIcono: Color,
+    colorTexto: Color,
     onClick: () -> Unit
 ) {
-    Button(
-        onClick = onClick,
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(76.dp)
             .shadow(
-                elevation = 4.dp,
-                shape = RoundedCornerShape(16.dp)
-            ),
-        shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = backgroundColor,
-            contentColor = contentColor
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = title,
-                modifier = Modifier.size(32.dp)
+                elevation = 8.dp,
+                shape     = RoundedCornerShape(16.dp)
             )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(
-                horizontalAlignment = Alignment.Start
+            .clip(RoundedCornerShape(16.dp))
+            .background(gradiente)
+    ) {
+        Button(
+            onClick   = onClick,
+            modifier  = Modifier.fillMaxSize(),
+            shape     = RoundedCornerShape(16.dp),
+            colors    = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor   = colorTexto
+            ),
+            elevation = ButtonDefaults.buttonElevation(0.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                verticalAlignment     = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
             ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = contentColor.copy(alpha = 0.8f),
-                    fontSize = 14.sp
-                )
+                Box(
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.White.copy(alpha = 0.2f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = icono,
+                        contentDescription = titulo,
+                        tint     = colorIcono,
+                        modifier = Modifier.size(26.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(14.dp))
+
+                Column(horizontalAlignment = Alignment.Start) {
+                    Text(
+                        text  = titulo,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        fontSize   = 16.sp,
+                        color      = colorTexto
+                    )
+                    Text(
+                        text  = subtitulo,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colorTexto.copy(alpha = 0.85f),
+                        fontSize = 13.sp
+                    )
+                }
             }
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "Principal — Modo Claro")
 @Composable
 fun PreviewPantallaPrincipal() {
-    PantallaPrincipal(
-        nombre = "Juan",
-        Atras = {},
-        IrAFormulario = {},
-        IrAReporte = {}
-    )
+    DenunciaTheme(darkTheme = false) {
+        PantallaPrincipal(
+            nombre      = "María",
+            Atras       = {},
+            IrAFormulario = {},
+            IrAReporte  = {}
+        )
+    }
 }
 
+@Preview(showBackground = true, name = "Principal — Modo Oscuro",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun PreviewPantallaPrincipalDark() {
+    DenunciaTheme(darkTheme = true) {
+        PantallaPrincipal(
+            nombre      = "María",
+            Atras       = {},
+            IrAFormulario = {},
+            IrAReporte  = {}
+        )
+    }
+}

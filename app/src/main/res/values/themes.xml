@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Denuncia" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Tema claro nativo para ventana/splash — el UI real es 100% Compose -->
+    <style name="Theme.Denuncia" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/verde_principal</item>
+        <item name="colorPrimaryDark">@color/verde_oscuro</item>
+        <item name="colorAccent">@color/verde_claro</item>
+        <item name="android:colorBackground">@color/fondo_claro</item>
+        <item name="android:statusBarColor">@color/verde_principal</item>
+        <item name="android:navigationBarColor">@color/fondo_claro</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
 </resources>

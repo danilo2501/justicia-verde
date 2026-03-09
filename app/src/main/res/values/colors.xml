@@ -1,10 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+
+    <!-- ===== PALETA PRINCIPAL JUSTICIA VERDE ===== -->
+
+    <!-- Verde principal y variaciones -->
+    <color name="verde_principal">#FF0D7C46</color>
+    <color name="verde_oscuro">#FF095C33</color>
+    <color name="verde_muy_oscuro">#FF063D22</color>
+    <color name="verde_medio">#FF119954</color>
+    <color name="verde_claro">#FF28B566</color>
+    <color name="verde_suave">#FF5ECE8A</color>
+    <color name="verde_palido">#FFA8E6C3</color>
+    <color name="verde_muy_palido">#FFD4F2E2</color>
+    <color name="verde_container_claro">#FFE8F8F0</color>
+
+    <!-- Blancos y neutros -->
+    <color name="blanco">#FFFFFFFF</color>
+    <color name="blanco_suave">#FFF9FDFB</color>
+    <color name="gris_muy_claro">#FFF0F7F4</color>
+    <color name="gris_claro">#FFE2EDE8</color>
+    <color name="gris_medio">#FF9EB8AD</color>
+    <color name="gris_oscuro">#FF5A7A6E</color>
+
+    <!-- Fondos modo claro -->
+    <color name="fondo_claro">#FFF5FCF8</color>
+    <color name="superficie_claro">#FFFFFFFF</color>
+    <color name="superficie_variante_claro">#FFE8F5EF</color>
+
+    <!-- Textos modo claro -->
+    <color name="texto_primario_claro">#FF0A2E1C</color>
+    <color name="texto_secundario_claro">#FF1B5E3A</color>
+    <color name="texto_sobre_primario">#FFFFFFFF</color>
+
+    <!-- Fondos modo oscuro -->
+    <color name="fondo_oscuro">#FF0A1F14</color>
+    <color name="superficie_oscuro">#FF112B1A</color>
+    <color name="superficie_variante_oscuro">#FF1A3D25</color>
+
+    <!-- Textos modo oscuro -->
+    <color name="texto_primario_oscuro">#FFD4F2E2</color>
+    <color name="texto_secundario_oscuro">#FF8ECEAD</color>
+
+    <!-- Error / Alerta (tono cálido para contraste) -->
+    <color name="rojo_error">#FFB00020</color>
+    <color name="rojo_error_container">#FFFFDAD6</color>
+    <color name="naranja_alerta">#FFE65100</color>
+
+    <!-- Legado (no eliminar por posibles referencias) -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
 </resources>
