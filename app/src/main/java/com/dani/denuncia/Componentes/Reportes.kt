@@ -1,21 +1,27 @@
 package com.dani.denuncia.Componentes
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -29,6 +35,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,11 +46,15 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import coil.compose.AsyncImage
 import com.dani.denuncia.ui.theme.DenunciaTheme
 import com.dani.denuncia.ui.theme.VerdePrincipal
 import java.text.SimpleDateFormat
@@ -48,7 +62,7 @@ import java.util.Date
 import java.util.Locale
 
 fun formatearFecha(timestamp: Long): String {
-    val date   = Date(timestamp)
+    val date    = Date(timestamp)
     val formato = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
     return formato.format(date)
 }
@@ -169,8 +183,11 @@ fun ReporteCompleto(
     descripcion: String,
     ubicacion: String,
     fecha: Long,
-    usuario: String
+    usuario: String,
+    imagenesUrls: List<String> = emptyList()
 ) {
+    var imagenAmpliada by remember { mutableStateOf<String?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -289,6 +306,93 @@ fun ReporteCompleto(
                     titulo  = "Reportado por",
                     valor   = usuario
                 )
+
+                // Sección de imágenes
+                if (imagenesUrls.isNotEmpty()) {
+                    HorizontalDivider(
+                        color     = MaterialTheme.colorScheme.outlineVariant,
+                        thickness = 0.8.dp
+                    )
+
+                    Text(
+                        text  = "Evidencia fotográfica",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    // Grid de imágenes (2 columnas)
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(
+                                // Calcular altura: filas * (tamaño celda + spacing)
+                                ((imagenesUrls.size + 1) / 2 * 170).dp
+                            ),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement   = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(imagenesUrls) { url ->
+                            AsyncImage(
+                                model = url,
+                                contentDescription = "Imagen del reporte",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1f)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .clickable { imagenAmpliada = url }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // --- Dialogo imagen en pantalla completa ---
+    imagenAmpliada?.let { url ->
+        Dialog(
+            onDismissRequest = { imagenAmpliada = null },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.95f))
+                    .clickable { imagenAmpliada = null },
+                contentAlignment = Alignment.Center
+            ) {
+                AsyncImage(
+                    model = url,
+                    contentDescription = "Imagen ampliada",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                )
+
+                // Botón cerrar
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp)
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.2f))
+                        .clickable { imagenAmpliada = null },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Cerrar",
+                        tint     = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
         }
     }
@@ -386,11 +490,12 @@ fun PreviewReportesDark() {
 fun PreviewReporteCompleto() {
     DenunciaTheme(darkTheme = false) {
         ReporteCompleto(
-            titulo      = "Contaminación de recursos hídricos",
-            descripcion = "Se encontraron residuos industriales en el río cercano al barrio sur.",
-            ubicacion   = "Bogotá, Colombia",
-            fecha       = System.currentTimeMillis(),
-            usuario     = "María García"
+            titulo       = "Contaminación de recursos hídricos",
+            descripcion  = "Se encontraron residuos industriales en el río cercano al barrio sur.",
+            ubicacion    = "Bogotá, Colombia",
+            fecha        = System.currentTimeMillis(),
+            usuario      = "María García",
+            imagenesUrls = emptyList()
         )
     }
 }
@@ -401,11 +506,12 @@ fun PreviewReporteCompleto() {
 fun PreviewReporteCompletoDark() {
     DenunciaTheme(darkTheme = true) {
         ReporteCompleto(
-            titulo      = "Contaminación de recursos hídricos",
-            descripcion = "Se encontraron residuos industriales en el río cercano al barrio sur.",
-            ubicacion   = "Bogotá, Colombia",
-            fecha       = System.currentTimeMillis(),
-            usuario     = "María García"
+            titulo       = "Contaminación de recursos hídricos",
+            descripcion  = "Se encontraron residuos industriales en el río cercano al barrio sur.",
+            ubicacion    = "Bogotá, Colombia",
+            fecha        = System.currentTimeMillis(),
+            usuario      = "María García",
+            imagenesUrls = emptyList()
         )
     }
 }

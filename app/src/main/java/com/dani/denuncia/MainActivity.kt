@@ -27,7 +27,7 @@ import com.dani.denuncia.Pantallas.PantallaPrincipal
 import com.dani.denuncia.Pantallas.ReportesScreen
 import com.dani.denuncia.Pantallas.PantallaInicio
 import com.dani.denuncia.ui.theme.DenunciaTheme
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
 
@@ -87,22 +87,25 @@ fun NavegacionPantallas(userPrefs: UserPreferencesDataStore) {
             var reporte by remember { mutableStateOf<Map<String, Any>?>(null) }
 
             LaunchedEffect(id) {
-                FirebaseDatabase.getInstance().getReference("reportes")
-                    .child(id)
+                FirebaseFirestore.getInstance().collection("reportes")
+                    .document(id)
                     .get()
-                    .addOnSuccessListener { snapshot ->
-                        @Suppress("UNCHECKED_CAST")
-                        reporte = snapshot.value as? Map<String, Any>
+                    .addOnSuccessListener { doc ->
+                        reporte = doc.data?.let { it + mapOf("id" to doc.id) }
                     }
             }
 
             reporte?.let {
+                @Suppress("UNCHECKED_CAST")
+                val imagenesUrls = (it["imagenesUrls"] as? List<*>)
+                    ?.filterIsInstance<String>() ?: emptyList()
                 ReporteCompleto(
-                    titulo      = it["tipo"].toString(),
-                    descripcion = it["descripcion"].toString(),
-                    ubicacion   = it["ubicacion"].toString(),
-                    fecha       = it["fecha"].toString().toLong(),
-                    usuario     = it["usuario"].toString()
+                    titulo        = it["tipo"].toString(),
+                    descripcion   = it["descripcion"].toString(),
+                    ubicacion     = it["ubicacion"].toString(),
+                    fecha         = (it["fecha"] as? Long) ?: it["fecha"].toString().toLongOrNull() ?: 0L,
+                    usuario       = it["usuario"].toString(),
+                    imagenesUrls  = imagenesUrls
                 )
             } ?: Text("Cargando reporte...")
         }

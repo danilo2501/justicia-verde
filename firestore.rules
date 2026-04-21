@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Colección de usuarios: cualquiera puede crear y leer
+    match /usuarios/{docId} {
+      allow read, create: if true;
+      allow update, delete: if false;
+    }
+
+    // Colección de reportes: cualquiera puede crear y leer
+    // No se permite editar ni eliminar desde la app
+    match /reportes/{reporteId} {
+      allow read, create: if true;
+      allow update, delete: if false;
+    }
+  }
+}

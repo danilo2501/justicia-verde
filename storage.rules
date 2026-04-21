@@ -1,0 +1,18 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Imágenes de reportes: cualquiera puede subir y leer
+    // Ruta: reportes/{reporteId}/imagen_N.jpg
+    match /reportes/{reporteId}/{imagenNombre} {
+      // Permitir lectura pública
+      allow read: if true;
+
+      // Permitir subida si:
+      // - El archivo es una imagen (jpg, jpeg, png, webp)
+      // - El tamaño no supera 10 MB
+      allow write: if request.resource.contentType.matches('image/.*')
+                   && request.resource.size <= 10 * 1024 * 1024;
+    }
+  }
+}

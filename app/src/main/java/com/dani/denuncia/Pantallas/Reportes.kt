@@ -39,25 +39,25 @@ import androidx.compose.ui.unit.sp
 import com.dani.denuncia.Componentes.ReporteEnLista
 import com.dani.denuncia.ui.theme.DenunciaTheme
 import com.dani.denuncia.ui.theme.VerdePrincipal
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun ReportesScreen(onClickReporte: (String) -> Unit = {}) {
-    val database = FirebaseDatabase.getInstance().getReference("reportes")
+    val db = FirebaseFirestore.getInstance()
     val reportes = remember { mutableStateListOf<Map<String, Any>>() }
 
     LaunchedEffect(Unit) {
-        database.get().addOnSuccessListener { snapshot ->
-            reportes.clear()
-            snapshot.children.forEach { child ->
-                child.value?.let { value ->
-                    if (value is Map<*, *>) {
-                        @Suppress("UNCHECKED_CAST")
-                        reportes.add(value as Map<String, Any>)
+        db.collection("reportes")
+            .orderBy("fecha", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                reportes.clear()
+                snapshot.documents.forEach { doc ->
+                    doc.data?.let { data ->
+                        reportes.add(data + mapOf("id" to doc.id))
                     }
                 }
             }
-        }
     }
 
     Box(

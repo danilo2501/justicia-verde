@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import com.dani.denuncia.Componentes.UserPreferencesDataStore
 import com.dani.denuncia.ui.theme.DenunciaTheme
 import com.dani.denuncia.ui.theme.VerdePrincipal
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 @Composable
@@ -174,21 +175,27 @@ fun PantallaInicio(Siguiente: (String) -> Unit, userPrefs: UserPreferencesDataSt
                     )
 
                     // Botón "Ingresar" con degradado horizontal
+                    val nombreValido = nombre.trim().isNotBlank()
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(54.dp)
                             .shadow(
-                                elevation  = 6.dp,
+                                elevation  = if (nombreValido) 6.dp else 2.dp,
                                 shape      = RoundedCornerShape(14.dp),
                                 spotColor  = VerdePrincipal.copy(alpha = 0.35f)
                             )
                             .clip(RoundedCornerShape(14.dp))
                             .background(
-                                brush = Brush.horizontalGradient(
+                                brush = if (nombreValido) Brush.horizontalGradient(
                                     colors = listOf(
                                         MaterialTheme.colorScheme.primary,
                                         MaterialTheme.colorScheme.tertiary
+                                    )
+                                ) else Brush.horizontalGradient(
+                                    colors = listOf(
+                                        MaterialTheme.colorScheme.surfaceVariant,
+                                        MaterialTheme.colorScheme.surfaceVariant
                                     )
                                 )
                             ),
@@ -196,17 +203,26 @@ fun PantallaInicio(Siguiente: (String) -> Unit, userPrefs: UserPreferencesDataSt
                     ) {
                         Button(
                             onClick = {
-                                val nombreFinal = nombre.trim().ifBlank { "Anónimo" }
+                                val nombreFinal = nombre.trim()
                                 coroutineScope.launch {
                                     userPrefs.saveUserData(nombreFinal, false)
                                 }
+                                // Guardar usuario en Firestore colección "usuarios"
+                                FirebaseFirestore.getInstance().collection("usuarios")
+                                    .add(mapOf(
+                                        "nombre" to nombreFinal,
+                                        "fecha"  to System.currentTimeMillis()
+                                    ))
                                 Siguiente(nombreFinal)
                             },
+                            enabled   = nombreValido,
                             modifier  = Modifier.fillMaxSize(),
                             shape     = RoundedCornerShape(14.dp),
                             colors    = ButtonDefaults.buttonColors(
-                                containerColor = Color.Transparent,
-                                contentColor   = Color.White
+                                containerColor         = Color.Transparent,
+                                contentColor           = Color.White,
+                                disabledContainerColor = Color.Transparent,
+                                disabledContentColor   = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                             ),
                             elevation = ButtonDefaults.buttonElevation(
                                 defaultElevation = 0.dp,
