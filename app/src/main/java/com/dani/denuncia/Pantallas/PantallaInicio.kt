@@ -161,7 +161,7 @@ fun PantallaInicio(Siguiente: (String) -> Unit, userPrefs: UserPreferencesDataSt
                     OutlinedTextField(
                         value       = nombre,
                         onValueChange = { nombre = it },
-                        label       = { Text("Tu nombre") },
+                        label       = { Text("Ingresa tu nombre") },
                         placeholder = { Text("Ej. María García") },
                         modifier    = Modifier.fillMaxWidth(),
                         singleLine  = true,
